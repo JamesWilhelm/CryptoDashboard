@@ -29,10 +29,6 @@ struct KrakenTickerResponse: Codable {
     let channel: String
     let type: String
     let data: [KrakenTickerData]
-    
-    enum CodingKeys: String, CodingKey {
-        case channel, type, data
-    }
 }
 
 struct KrakenTickerData: Codable {
@@ -41,7 +37,7 @@ struct KrakenTickerData: Codable {
     
     enum CodingKeys: String, CodingKey {
         case symbol
-        case price = "last"
+        case price = "last" // Maps directly from Kraken's floating point primitive
     }
 }
 

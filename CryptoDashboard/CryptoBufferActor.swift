@@ -17,17 +17,17 @@ actor CryptoBufferActor {
         return AsyncStream { continuation in
             continuation.onTermination = { _ in }
             
-            // Task 1: Continuously digest incoming Kraken payloads
             Task {
                 let decoder = JSONDecoder()
                 for await rawData in rawStream {
-                    // Filter system updates out and target actual channel data objects
+                    // Drop the type restriction constraint so we catch both snapshot arrays and update packets
                     if let response = try? decoder.decode(KrakenTickerResponse.self, from: rawData),
-                       response.channel == "ticker" && response.type == "update" {
+                       response.channel == "ticker" {
                         
                         for item in response.data {
                             if let symbol = CryptoSymbol(rawValue: item.symbol) {
                                 pricesCache[symbol] = item.price
+                                print("🎯 Cached live price for \(symbol.rawValue): $\(item.price)")
                             }
                         }
                     }
